@@ -1,1 +1,1 @@
-# RT+Paralla;
+# RT+Parallax
