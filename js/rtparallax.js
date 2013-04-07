@@ -4,40 +4,40 @@
 // Written for Red Tettemer + Partners by Joseph Russell
 ; (function($) {
 
-	$.fn.rtparallax = function(options) {
+    $.fn.rtparallax = function(options) {
 
-		/* ---------- Private internal variables */
+        /* ---------- Private internal variables */
 
-		// The default options
-		var _defaults = { };
+        // The default options
+        var _defaults = { };
 
-		// Overwrite the default options with any user-provided options
-		var _options = $.extend({}, _defaults, options);
+        // Overwrite the default options with any user-provided options
+        var _options = $.extend({}, _defaults, options);
 
-		// The HTML element the plugin was called on
-		var _element = this;
-
-
-		/* ---------- Internal methods */
-
-		// Set up the initial plugin structure
-		var initialize = function(options) { };
+        // The HTML element the plugin was called on
+        var _element = this;
 
 
-		/* ---------- Publicly-available methods */
+        /* ---------- Internal methods */
 
-		// Slide everything to the right
-		this.slideRight = function() { };
-
-		// Slide everything to the left
-		this.slideLeft = function() { };
+        // Set up the initial plugin structure
+        var initialize = function(options) { };
 
 
-		/* ---------- Initialize the plugin */
-		initialize();
+        /* ---------- Publicly-available methods */
+
+        // Slide everything to the right
+        this.slideRight = function() { };
+
+        // Slide everything to the left
+        this.slideLeft = function() { };
 
 
-		/* ---------- Return this object so people can actually call our methods */
-		return this;
-	}
+        /* ---------- Initialize the plugin */
+        initialize();
+
+
+        /* ---------- Return this object so people can actually call our methods */
+        return this;
+    }
 })(jQuery);
