@@ -10,10 +10,10 @@
 
         // The default options
         var _defaults = {
-			'images': [],
-			'height': 300,
-			'width': '100%'
-		};
+            'images': [],
+            'height': 300,
+            'width': '100%'
+        };
 
         // Overwrite the default options with any user-provided options
         var _options = $.extend({}, _defaults, options);
@@ -26,7 +26,7 @@
 
         // Set up the initial plugin structure
         var initialize = function() { 
-		
+        
             // Apply base level default CSS styling to the div
             _element.css({
                 'height': _options.height,
@@ -40,7 +40,7 @@
                         'height': '100%',
                         'position': 'relative'
                     });
-		
+        
             // Empty out the div and append the structure created above
             _element.empty().append(newStructure);
 
@@ -61,7 +61,7 @@
                             })
                     );
             });
-		};
+        };
 
 
         /* ---------- Publicly-available methods */
