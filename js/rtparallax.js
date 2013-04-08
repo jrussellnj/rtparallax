@@ -180,7 +180,7 @@
 			_initialize();
 		}
 
-        /* ---------- Return this object so people can actually call our methods */
+		/* ---------- Return this object so people can actually call our methods */
 		return new RTParallax(this, options);
     }
 })(jQuery);
