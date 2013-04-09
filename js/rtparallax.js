@@ -51,6 +51,9 @@
 			// The HTML element the plugin was called on
 			var _element = element;
 
+			// The width of the furthest down image, used in various calculations below
+			var _backgroundImageWidth = 0;
+
 			// Used to resolve the correct scope inside the methods below
 			var _this = this;
 
@@ -110,12 +113,13 @@
 				// that the user provided or, if that wasn't specified, the width of the background image
 				var tempImage = new Image();
 				tempImage.src = _options.images[0];
+				_backgroundImageWidth = tempImage.width;
 
 				if (_options.slideDistance != '') {
-					_this.pages = Math.ceil(tempImage.width / _options.slideDistance);
+					_this.pages = Math.ceil(_backgroundImageWidth / _options.slideDistance);
 				}
 				else {
-					_this.pages = Math.ceil(tempImage.width / $('#rtp-container').width());
+					_this.pages = Math.ceil(_backgroundImageWidth / $('#rtp-container').width());
 				}
 
 				// Bind the next and previous buttons to sliding left and right
@@ -139,12 +143,16 @@
 				// If the user has provided a function to call before the slide begins, call it here
 				_options.onSlideBegin.call(_this);
 
-				// The pixel width of the element that contains the divs whose images we want to slide
+				// Either the pixel width of the element that contains the divs whose images 
+				// we want to slide or the value in pixels that was provided by the user
 				var amountToSlide = _options.slideDistance ? _options.slideDistance : $('#rtp-container').width();
+
+				// Cache the parallax container for use below
+				var rtpcontainer = $('#rtp-container');
 
 				// Slide each image in the parallax containing element to the right, increasing
 				// the speed by double as we get closer to the top layer.
-				$('#rtp-container').children().each(function(index, element) {
+				rtpcontainer.children().each(function(index, element) {
 
 					// Get the image to slide and its current left margin
 					var thisImage = $('img', this);
@@ -157,14 +165,25 @@
 						}
 						else {
 							var newMarginToSlideTo = (currentLeftMargin - parseInt(amountToSlide * (index + 1)));
+
+							// Make sure the right side of the furthest down background image won't slide past the right side of the container
+							if (((Math.abs(newMarginToSlideTo) + rtpcontainer.width()) > _backgroundImageWidth) && (index == 0)) {
+								var newMarginToSlideTo = (_backgroundImageWidth - rtpcontainer.width()) * (index + 1) * -1;
+							} 
 						}
 					}
 					else {
 						if (_this.currentPage == 1) {
-							var newMarginToSlideTo = (thisImage.width() - (!isNaN(_options.width) ? _options.width : $('#rtp-container').width())) * -1;
+							var newMarginToSlideTo = (thisImage.width() - (!isNaN(_options.width) ? _options.width : rtpcontainer.width())) * -1;
 						}
 						else {
 							var newMarginToSlideTo = (currentLeftMargin == 0) ? 0 : (currentLeftMargin + parseInt(amountToSlide * (index + 1)));
+
+							// Make sure the left side of both images are flush up against the left side of the container if we're sliding
+							// an uneven amount of pixels back to the left
+							if ((currentLeftMargin < 0) && (newMarginToSlideTo > 0)) {
+								newMarginToSlideTo = 0;
+							}
 						}
 					}
 
@@ -196,12 +215,16 @@
 
 			// Slide everything to the right
 			this.slideRight = function() {
-				_slide('right');
+				if (!$('#rtp-container').find('img:animated').length) {
+					_slide('right');
+				}
 			}
 
 			// Slide everything to the left
 			this.slideLeft = function() {
-				_slide('left');
+				if (!$('#rtp-container').find('img:animated').length) {
+					_slide('left');
+				}
 			}
 
 			/* ---------- Initialize the plugin */
