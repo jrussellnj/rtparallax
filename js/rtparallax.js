@@ -26,6 +26,18 @@
 				'nextButton': $('.rtp-next'),
 				'prevButton': $('.rtp-prev'),
 
+				// This gets called after slider initialization
+				'onLoadComplete': $.noop,
+
+				// This gets called right before a call to _slide occurs
+				'onSlideBegin': $.noop,
+
+				// This gets called after a slide has completed
+				'onSlideComplete': $.noop,
+
+				// How far in pixels to slide each time the next or previous button is hit
+				'slideDistance': '',
+
 				// The amount of time the animation will take (in milliseconds)
 				'speed': 1000,
 
@@ -39,14 +51,18 @@
 			// The HTML element the plugin was called on
 			var _element = element;
 
+			// Used to resolve the correct scope inside the methods below
+			var _this = this;
+
+
+			/* ---------- Publicly available variables */
+
 			// The number of "pages" the scroller will have, i.e., how many times we need 
 			// to slide to see the entire image furthest in the background
-			var _pages = 1;
+			this.pages = 1;
 
 			// What the current "page" of the slider is
-			var _currentPage = 1
-
-			var _this = this;
+			this.currentPage = 1
 
 
 			/* ---------- Internal methods */
@@ -90,11 +106,17 @@
 						);
 				});
 
-				// Get the size of the image the furthest in the background to use 
-				// as the basis for how many pages there are in the slider
+				// Figure out the number of "pages" in the slider based either on the distance to slide
+				// that the user provided or, if that wasn't specified, the width of the background image
 				var tempImage = new Image();
 				tempImage.src = _options.images[0];
-				_pages = Math.ceil(tempImage.width / $('#rtp-container').width());
+
+				if (_options.slideDistance != '') {
+					_this.pages = Math.ceil(tempImage.width / _options.slideDistance);
+				}
+				else {
+					_this.pages = Math.ceil(tempImage.width / $('#rtp-container').width());
+				}
 
 				// Bind the next and previous buttons to sliding left and right
 				_options.nextButton.bind('click', function(ev) {
@@ -106,13 +128,19 @@
 					ev.preventDefault();
 					_this.slideLeft();
 				});
+
+				// If the user has provided a function to call after initialization, call it here
+				_options.onLoadComplete.call(_this);
 			};
 
 			// Calculate how far to slide the images in the given direction and then carry out the slide
 			var _slide = function(direction) {
 
+				// If the user has provided a function to call before the slide begins, call it here
+				_options.onSlideBegin.call(_this);
+
 				// The pixel width of the element that contains the divs whose images we want to slide
-				var amountToSlide = $('#rtp-container').width();
+				var amountToSlide = _options.slideDistance ? _options.slideDistance : $('#rtp-container').width();
 
 				// Slide each image in the parallax containing element to the right, increasing
 				// the speed by double as we get closer to the top layer.
@@ -124,7 +152,7 @@
 
 					// Figure out what the new margin to slide to should be based on which direction we're sliding
 					if (direction == 'right') {
-						if (_currentPage == _pages) {
+						if (_this.currentPage == _this.pages) {
 							var newMarginToSlideTo = 0;
 						}
 						else {
@@ -132,8 +160,8 @@
 						}
 					}
 					else {
-						if (_currentPage == 1) {
-							var newMarginToSlideTo = (thisImage.width() - _options.width) * -1;
+						if (_this.currentPage == 1) {
+							var newMarginToSlideTo = (thisImage.width() - (!isNaN(_options.width) ? _options.width : $('#rtp-container').width())) * -1;
 						}
 						else {
 							var newMarginToSlideTo = (currentLeftMargin == 0) ? 0 : (currentLeftMargin + parseInt(amountToSlide * (index + 1)));
@@ -141,24 +169,24 @@
 					}
 
 					// Carry out the sliding animation
-					thisImage.animate({ 'margin-left': newMarginToSlideTo + 'px' }, _options.speed, 'jswing');
+					thisImage.stop(true, true).animate( { 'margin-left': newMarginToSlideTo + 'px' }, _options.speed, 'jswing', function() { _options.onSlideComplete.call(_this) });
 				});
 
-				// Update the current page
+				// Update what the current page is
 				if (direction == 'right') {
-					if (_currentPage < _pages) {
-						_currentPage++;
+					if (_this.currentPage < _this.pages) {
+						_this.currentPage++;
 					}
 					else {
-						_currentPage = 1;
+						_this.currentPage = 1;
 					}
 				}
 				else {
-					if (_currentPage > 1) {
-						_currentPage--;
+					if (_this.currentPage > 1) {
+						_this.currentPage--;
 					}
 					else {
-						_currentPage = _pages;
+						_this.currentPage = _this.pages;
 					}
 				}
 			};
