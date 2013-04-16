@@ -14,14 +14,24 @@
 
     <script type="text/javascript">
     $(document).ready(function() {
-        var parallaxingdiv = $('#parallaxingdiv').rtparallax({ });
+        var parallaxingdiv = $('#parallaxingdiv').rtparallax({
+            'images': [ '/images/timeline-bg1.jpg', '/images/timeline-bg2.png', '/images/timeline-bg3.png' ],
+            'height': 400,
+            'slideDistance': [ 784, 671, 535, 864, 1090, 865, 468, 664, 778, 1097, 757, 584, 896 ],
+            'width': 1024
+         });
     });
     </script>
 </head>
 
 <body>
     <div id="parallaxingdiv"></div>
-    <a href="#" class="rtp-previous">Previous</a>
-    <a href="#" class="rtp-next">Next</a>
+
+    <div style="width: 1024px; margin-top: 25px; text-align: center;">
+        <a href="#" class="rtp-prev">&laquo; Previous</a>
+        <a href="#" class="rtp-next">Next &raquo;</a>
+    </div>
+
+    <div id="pagination"> </div>
 </body>
 </html>
