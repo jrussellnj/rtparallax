@@ -16,6 +16,9 @@ var l = function() { console.log($.makeArray(arguments).join(' ')); };
 			// The default options
 			var _defaults = {
 
+				// The easing to use for the slide transition
+				'easing': 'jswing',
+
 				// The images to parallax slide through in the element. The earlier an image appears
 				// in the array, the further into the background it is inside.
 				'images': [],
@@ -216,7 +219,7 @@ var l = function() { console.log($.makeArray(arguments).join(' ')); };
 					}
 
 					// Carry out the sliding animation
-					thisImage.stop(true, true).animate( { 'margin-left': newMarginToSlideTo + 'px' }, _options.speed, 'jswing', function() { _options.onSlideComplete.call(_this) });
+					thisImage.stop(true, true).animate( { 'margin-left': newMarginToSlideTo + 'px' }, _options.speed, _options.easing, function() { _options.onSlideComplete.call(_this) });
 
                     thisStep += stepAmount;
 				});
