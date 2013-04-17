@@ -15,7 +15,6 @@
     <script type="text/javascript">
     $(document).ready(function() {
         var parallaxingdiv = $('#parallaxingdiv').rtparallax({
-			'easing': 'easeOutBack',
             'images': [ '/images/timeline-bg1.jpg', '/images/timeline-bg2.png', '/images/timeline-bg3.png' ],
             'height': 400,
             'slideDistance': [ 784, 671, 535, 864, 1090, 865, 468, 664, 778, 1097, 757, 584, 896 ],
