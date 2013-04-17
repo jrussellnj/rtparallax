@@ -122,6 +122,9 @@ var l = function() { console.log($.makeArray(arguments).join(' ')); };
                             theImage.load(function() {
                                 _backgroundImageWidth = $(this).width();
                                 _figurePageCount();
+
+								// If the user has provided a function to call after initialization, call it here
+								_options.onLoadComplete.call(_this);
                             });
                         }
 				});
@@ -141,9 +144,6 @@ var l = function() { console.log($.makeArray(arguments).join(' ')); };
                 $(window).resize(function() {
                     _figurePageCount();
                 });
-
-				// If the user has provided a function to call after initialization, call it here
-				_options.onLoadComplete.call(_this);
 			};
 
 			// Calculate how far to slide the images in the given direction and then carry out the slide
@@ -276,6 +276,41 @@ var l = function() { console.log($.makeArray(arguments).join(' ')); };
 			this.slideLeft = function() {
 				if (!$('#rtp-container').find('img:animated').length) {
 					_slide('left');
+				}
+			}
+
+			// Allow sliding to a particular page in the slider
+			this.slideToPage = function(page) {
+				if (page && !isNaN(page)) {
+					if ($.isArray(_options.slideDistance)) {
+
+						var newMarginToSlideTo = 0;
+
+						for (var i = 0; i < (page - 1); i++) {
+							newMarginToSlideTo += _options.slideDistance[i];
+						}
+
+						newMarginToSlideTo *= -1;
+
+						var stepAmount = 0.25;
+						var thisStep = 1;
+
+						$('#rtp-container').children().each(function(index, element) {
+
+							// Get the image to slide and its current left margin
+							var thisImage = $('img', this);
+
+							// Update the margin to slide to for each layer up the slider
+							var slideTo = newMarginToSlideTo * thisStep;
+
+							// Carry out the sliding animation
+							thisImage.stop(true, true).animate( { 'margin-left': slideTo + 'px' }, _options.speed, _options.easing, function() { _options.onSlideComplete.call(_this) });
+
+							thisStep += stepAmount;
+						});
+
+						this.currentPage = page;
+					}
 				}
 			}
 
